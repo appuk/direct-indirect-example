@@ -29,7 +29,7 @@
       vmware.vmware.deploy_folder_template:
         template_name: "{{ vm_template_name }}"
         vm_name: "{{ test_vm_name }}"
-        # vm_folder: "{{ vcenter_folder }}"
+        vm_folder: "{{ vcenter_folder }}"
         cluster: "{{ vcenter_cluster }}"
         datacenter: "{{ vcenter_datacenter }}"
 
@@ -37,7 +37,7 @@
       community.vmware.vmware_guest:
         state: poweredon
         name: "{{ test_vm_name }}"
-        # folder: "{{ vcenter_folder }}"
+        folder: "{{ vcenter_folder }}"
         cluster: "{{ vcenter_cluster }}"
         datacenter: "{{ vcenter_datacenter }}"
 
