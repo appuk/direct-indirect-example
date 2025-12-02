@@ -4,15 +4,12 @@
   gather_facts: false
   vars_files:
     - vars.yml
-    environment:
-            vcenter_hostname: {{ lookup('ansible.builtin.env',
-  'VMWARE_HOST') }}
-            vcenter_username: {{ lookup('ansible.builtin.env',
-  'VMWARE_USER') }}
-            vcenter_password: {{ lookup('ansible.builtin.env',
-  'VMWARE_PASSWORD') }}
-            vcenter_validate_certs: {{ lookup('ansible.builtin.env',
-  'VMWARE_VALIDATE_CERTS') }}
+  
+  environment:
+    VCENTER_HOSTNAME: "{{ vcenter_hostname | default(lookup('ansible.builtin.env', 'VMWARE_HOST')) }}"
+    VCENTER_USERNAME: "{{ vcenter_username | default(lookup('ansible.builtin.env', 'VMWARE_USER')) }}"
+    VCENTER_PASSWORD: "{{ vcenter_password | default(lookup('ansible.builtin.env', 'VMWARE_PASSWORD')) }}"
+    VCENTER_VALIDATE_CERTS: "{{ vcenter_validate_certs | default(lookup('ansible.builtin.env', 'VMWARE_VALIDATE_CERTS')) }}"
 
   pre_tasks:
     - name: Check Inputs
@@ -49,6 +46,9 @@
         _inven_config: |
           ---
           plugin: vmware.vmware.vms
+          # NOTE: The inventory plugin usually looks for VMWARE_HOST/USER/PASSWORD
+          # or the VCENTER_... variables defined in the environment block above.
+          # I kept the VCENTER_... names here as they were in your original code.
           vcenter_hostname: {{ lookup('ansible.builtin.env', 'VCENTER_HOSTNAME') }}
           vcenter_username: {{ lookup('ansible.builtin.env', 'VCENTER_USERNAME') }}
           vcenter_password: {{ lookup('ansible.builtin.env', 'VCENTER_PASSWORD') }}
@@ -62,7 +62,7 @@
             ansible_ssh_pass: '"{{ test_vm_password }}"'
             inventory_hostname: '"{{ test_vm_name }}"'
 
-    - name: Print Inventory Config   # using pause because debug does not show multiline output :(
+    - name: Print Inventory Config    # using pause because debug does not show multiline output :(
       ansible.builtin.pause:
         seconds: 1
         prompt: "{{ _inven_config }}"
